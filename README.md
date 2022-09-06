@@ -2,7 +2,7 @@
 
 This was made as a short project to refresh my java knowledge.
 It contains an implementation of
-the [Altschul Ericksson dinucleotide shuffle](https://doi.org/10.1093/oxfordjournals.molbev.a040370).
+the [Altschul & Erickson dinucleotide shuffle](https://doi.org/10.1093/oxfordjournals.molbev.a040370).
 This algorithm shuffles a sequence of DNA nucleotides (i.e. ACGT) in such a way as to preserve the original frequency of
 each dinucleotide (or 2-mer) present in the original input.
 
