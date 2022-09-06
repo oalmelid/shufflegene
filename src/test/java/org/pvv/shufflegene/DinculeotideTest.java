@@ -1,9 +1,7 @@
-package org.pvv.shufflegene.test;
+package org.pvv.shufflegene;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.pvv.shufflegene.DinucleotideShuffle;
-import org.pvv.shufflegene.InvalidInputException;
 
 import java.util.HashMap;
 

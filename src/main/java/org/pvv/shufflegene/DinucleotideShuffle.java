@@ -27,6 +27,9 @@ public class DinucleotideShuffle {
     private final String sequence;
     private final Traverse traverse;
 
+    // ToDo: convert all of this into just a static shuffle method.
+    // We end up copying the traverse each time we shuffle, so not time is saved on instantiating and keeping a traverse.
+
     /**
      * Constructor for a shuffle. Checks that the sequence contains only valid characters and converts to uppercase.
      *
@@ -48,6 +51,7 @@ public class DinucleotideShuffle {
      * @return true if sequence is valid, false otherwise
      */
     public static boolean validSequence(String sequence) {
+        //ToDo: should only really accept strings of length at least 2.
         String patternRegex = String.format("^[%s]+$", ALPHABET);
         return Pattern.matches(patternRegex, sequence);
     }
