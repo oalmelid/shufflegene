@@ -6,8 +6,9 @@ the [Altschul Ericksson dinucleotide shuffle](https://doi.org/10.1093/oxfordjour
 This algorithm shuffles a sequence of DNA nucleotides (i.e. ACGT) in such a way as to preserve the original frequency of
 each dinucleotide (or 2-mer) present in the original input.
 
-Since this was mainly a refresher, I've added a readme, javadoc and unit tests, and might add more bells and whistles in
-the future for no good reason.
+Since this was mainly a refresher, I've added a
+readme, [javadoc](https://oalmelid.github.io/shufflegene/org/pvv/shufflegene/package-summary.html) and unit tests.
+I might add more bells and whistles in the future for no good reason.
 
 ## Usage
 
