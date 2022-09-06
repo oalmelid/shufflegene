@@ -114,7 +114,7 @@ public class Traverse {
         // Otherwise it throws an out of bounds exception. Need to think of a better
         // way to handle this. Possibly with an unsafeToString and a safe toString with a wrap.
         try {
-            for (int i = 1; i < this.length - 1; i++) {
+            for (int i = 1; i < this.length; i++) {
                 char next = edgeMapCopy.get(current).remove(0);
                 result.append(next);
                 current = next;
@@ -123,7 +123,6 @@ public class Traverse {
             return super.toString();
         }
 
-        result.append(end);
         return result.toString();
     }
 
