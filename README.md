@@ -11,7 +11,7 @@ the future for no good reason.
 
 ## Usage
 
-See the javadoc for details, but the shuffle can be called with i.e.
+See the javadoc for details, but the shuffle can be called with e.g.
 
 ```java
 import org.pvv.shufflegene.DinucleotideShuffle
