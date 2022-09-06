@@ -7,8 +7,9 @@ import java.util.regex.Pattern;
 
 
 /**
- * Shuffle a nucleotide sequence, retaining its dinucleotide frequencies. This is based on the algorithm by Altschul and
- * Erickson, as described in https://doi.org/10.1093/oxfordjournals.molbev.a040370
+ * Shuffle a nucleotide sequence, retaining its dinucleotide (2-mer) frequencies.
+ * This is based on the algorithm by Altschul and Erickson, as described in
+ * <a href="https://doi.org/10.1093/oxfordjournals.molbev.a040370">https://doi.org/10.1093/oxfordjournals.molbev.a040370</a>
  * <p>
  * It does the following:
  * <ul>
@@ -101,7 +102,7 @@ public class DinucleotideShuffle {
     /**
      * Check if a set of edges connect to the final character in the sequence.
      *
-     * @param edges
+     * @param edges list of edges to be examined.
      * @return true if connected, false otherwise.
      */
     private boolean isConnectedToEnd(List<Pair<Character, Character>> edges) {
@@ -114,7 +115,7 @@ public class DinucleotideShuffle {
         // The end element is connected to itself.
         connected.put(traverse.end, true);
 
-        for (int i = 0; i < alphabet.size() - 1; i++) {
+        for (int i = 0; i < edges.size(); i++) {
             for (Pair<Character, Character> vertex : edges) {
                 if (connected.get(vertex.getValue1())) {
                     connected.put(vertex.getValue0(), true);

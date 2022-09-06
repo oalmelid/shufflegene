@@ -61,9 +61,10 @@ public class Traverse {
     }
 
     /**
-     * Remove the first occurence of a given edge from the traverse.
+     * Remove the first occurrence of a given edge from the traverse.
      *
      * @param edge Pair of characters giving the start and end of the vertex.
+     * @return whether the removal was successful or not.
      */
     public boolean removeEdge(Pair<Character, Character> edge) {
         return edgeMap.get(edge.getValue0()).remove(edge.getValue1());
@@ -84,7 +85,7 @@ public class Traverse {
      * @return a copy of edgeMap
      */
     private HashMap<Character, ArrayList<Character>> copyEdgeMap() {
-        HashMap<Character, ArrayList<Character>> traversal = this.edgeMap
+        return this.edgeMap
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(
@@ -95,7 +96,6 @@ public class Traverse {
                         },
                         HashMap::new
                 ));
-        return traversal;
     }
 
     /**
