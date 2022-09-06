@@ -1,16 +1,24 @@
-package com.oalmelid.dinucleotide;
+package org.pvv.shufflegene;
 
 import org.javatuples.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 
 /**
- * Shuffle a nucleotide sequence, retaining its dinucleotide frequencies
+ * Shuffle a nucleotide sequence, retaining its dinucleotide frequencies. This is based on the algorithm by Altschul and
+ * Erickson, as described in https://doi.org/10.1093/oxfordjournals.molbev.a040370
+ * <p>
+ * It does the following:
+ * <ul>
+ * <li> Decomposes the sequence into a graph with nodes at the nucleotides ACGT and the sequence as a series of directed
+ * edges
+ * <li> Randomly selects a directed path which visits all nodes exactly ones, is connected, and ends at the final letter
+ * in the original sequence. Remove this path from the graph
+ * <li> Shuffles the ordering of all other edges in the graph on a per-node basis
+ * <li> Appends the previously removed path to the end of the vertices leaving each node
+ * </ul>
  */
 public class DinucleotideShuffle {
 
@@ -19,7 +27,7 @@ public class DinucleotideShuffle {
     private final Traverse traverse;
 
     /**
-     * Constructor for a sequence. Checks that the sequence contains only valid characters and converts to uppercase.
+     * Constructor for a shuffle. Checks that the sequence contains only valid characters and converts to uppercase.
      *
      * @param sequence the nucleotide sequence, most consist only of the letters ACGT, will be converted to uppercase on input.
      */
@@ -43,54 +51,12 @@ public class DinucleotideShuffle {
         return Pattern.matches(patternRegex, sequence);
     }
 
+    /**
+     * Perform a dinucleotide shuffle.
+     *
+     * @return a string containing a shuffled sequence with the same dinucleotide frequency as the input.
+     */
     public String shuffleSequence() {
-        Traverse shuffled = shuffleTraverse();
-        return shuffled.toString();
-    }
-
-
-    private ArrayList<Pair<Character, Character>> pickEdges() {
-        Random rand = new Random();
-        //fixme: I'm having to init this because of the connected = false below.
-        ArrayList<Pair<Character, Character>> edges = null;
-
-        while (edges == null || (!isConnected(edges))) {
-            edges = new ArrayList<>();
-            for (char start : traverse.alphabet()) {
-                if (start != traverse.end) {
-                    ArrayList<Character> jumps = traverse.getEdgeList(start);
-                    char end = jumps.get(rand.nextInt(jumps.size()));
-                    edges.add(new Pair<>(start, end));
-                }
-            }
-        }
-        return edges;
-    }
-
-    private boolean isConnected(ArrayList<Pair<Character, Character>> vertices) {
-        HashMap<Character, Boolean> connected = new HashMap<>();
-        Set<Character> alphabet = traverse.alphabet();
-
-        for (char key : alphabet) {
-            connected.put(key, false);
-        }
-        // The end element is connected to itself.
-        connected.put(traverse.end, true);
-
-        for (int i = 0; i < alphabet.size() - 1; i++) {
-            for (Pair<Character, Character> vertex : vertices) {
-                if (connected.get(vertex.getValue1())) {
-                    connected.put(vertex.getValue0(), true);
-                }
-            }
-            if (!connected.containsValue(false)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Traverse shuffleTraverse() {
         Traverse newTraversal = traverse.deepCopy();
         ArrayList<Pair<Character, Character>> edges = pickEdges();
 
@@ -104,6 +70,60 @@ public class DinucleotideShuffle {
             newTraversal.appendEdge(edge);
         }
 
-        return newTraversal;
+        return newTraversal.toString();
+    }
+
+    /**
+     * Pick a set of edges such that
+     * - All nodes in the graph (ACGT) are visited exactly once
+     * - The edges all connect
+     * - The edges end at the final character in the original sequence
+     *
+     * @return a set of Pairs representing directed edges.
+     */
+    private ArrayList<Pair<Character, Character>> pickEdges() {
+        Random rand = new Random();
+        ArrayList<Pair<Character, Character>> edges = null;
+
+        while (edges == null || (!isConnectedToEnd(edges))) {
+            edges = new ArrayList<>();
+            for (char start : traverse.alphabet()) {
+                if (start != traverse.end) {
+                    ArrayList<Character> jumps = traverse.getEdgeList(start);
+                    char end = jumps.get(rand.nextInt(jumps.size()));
+                    edges.add(new Pair<>(start, end));
+                }
+            }
+        }
+        return edges;
+    }
+
+    /**
+     * Check if a set of edges connect to the final character in the sequence.
+     *
+     * @param edges
+     * @return true if connected, false otherwise.
+     */
+    private boolean isConnectedToEnd(List<Pair<Character, Character>> edges) {
+        HashMap<Character, Boolean> connected = new HashMap<>();
+        Set<Character> alphabet = traverse.alphabet();
+
+        for (char key : alphabet) {
+            connected.put(key, false);
+        }
+        // The end element is connected to itself.
+        connected.put(traverse.end, true);
+
+        for (int i = 0; i < alphabet.size() - 1; i++) {
+            for (Pair<Character, Character> vertex : edges) {
+                if (connected.get(vertex.getValue1())) {
+                    connected.put(vertex.getValue0(), true);
+                }
+            }
+            if (!connected.containsValue(false)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

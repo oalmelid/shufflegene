@@ -1,4 +1,4 @@
-package com.oalmelid.dinucleotide;
+package org.pvv.shufflegene;
 
 import org.javatuples.Pair;
 
@@ -28,7 +28,7 @@ public class Traverse {
         this.edgeMap = edgeMap;
     }
 
-    private static <T> ArrayList<T> copyList(ArrayList<T> input) {
+    private static <T> ArrayList<T> copyList(List<T> input) {
         ArrayList<T> result = new ArrayList<>(input);
         Collections.copy(input, result);
         return result;
