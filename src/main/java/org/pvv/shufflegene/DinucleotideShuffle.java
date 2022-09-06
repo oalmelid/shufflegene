@@ -24,58 +24,44 @@ import java.util.regex.Pattern;
 public class DinucleotideShuffle {
 
     private static final String ALPHABET = "ACGT";
-    private final String sequence;
-    private final Traverse traverse;
-
-    // ToDo: convert all of this into just a static shuffle method.
-    // We end up copying the traverse each time we shuffle, so not time is saved on instantiating and keeping a traverse.
 
     /**
-     * Constructor for a shuffle. Checks that the sequence contains only valid characters and converts to uppercase.
+     * Perform a dinucleotide shuffle.
      *
-     * @param sequence the nucleotide sequence, most consist only of the letters ACGT, will be converted to uppercase on input.
+     * @param sequence the sequence to be shuffled.
+     * @return a string containing a shuffled sequence with the same dinucleotide frequency as the input.
      */
-    public DinucleotideShuffle(String sequence) throws InvalidInputException {
+    public static String shuffleSequence(String sequence) throws InvalidInputException {
         sequence = sequence.toUpperCase();
         if (!validSequence(sequence)) {
             throw new InvalidInputException(String.format("Input string %s does not conform with alphabet %s\n", sequence, ALPHABET));
         }
-        this.sequence = sequence;
-        this.traverse = new Traverse(sequence);
+
+        Traverse traverse = new Traverse(sequence);
+        ArrayList<Pair<Character, Character>> edges = pickEdges(traverse);
+
+        for (Pair<Character, Character> edge : edges) {
+            traverse.removeEdge(edge);
+        }
+
+        traverse.shuffleEdgeLists();
+
+        for (Pair<Character, Character> edge : edges) {
+            traverse.appendEdge(edge);
+        }
+
+        return traverse.toString();
     }
 
     /**
-     * Check if a nucleotide sequence only contains the letters ACGT
+     * Check if a nucleotide sequence only contains the letters contained in {@link #ALPHABET} and is at least 2 characters long.
      *
      * @param sequence the sequence to be verified, must be upper case before this is called
      * @return true if sequence is valid, false otherwise
      */
     public static boolean validSequence(String sequence) {
-        //ToDo: should only really accept strings of length at least 2.
-        String patternRegex = String.format("^[%s]+$", ALPHABET);
+        String patternRegex = String.format("^[%s]{2,}$", ALPHABET);
         return Pattern.matches(patternRegex, sequence);
-    }
-
-    /**
-     * Perform a dinucleotide shuffle.
-     *
-     * @return a string containing a shuffled sequence with the same dinucleotide frequency as the input.
-     */
-    public String shuffleSequence() {
-        Traverse newTraversal = traverse.deepCopy();
-        ArrayList<Pair<Character, Character>> edges = pickEdges();
-
-        for (Pair<Character, Character> edge : edges) {
-            newTraversal.removeEdge(edge);
-        }
-
-        newTraversal.shuffleEdgeLists();
-
-        for (Pair<Character, Character> edge : edges) {
-            newTraversal.appendEdge(edge);
-        }
-
-        return newTraversal.toString();
     }
 
     /**
@@ -86,11 +72,11 @@ public class DinucleotideShuffle {
      *
      * @return a set of Pairs representing directed edges.
      */
-    private ArrayList<Pair<Character, Character>> pickEdges() {
+    private static ArrayList<Pair<Character, Character>> pickEdges(Traverse traverse) {
         Random rand = new Random();
         ArrayList<Pair<Character, Character>> edges = null;
 
-        while (edges == null || (!isConnectedToEnd(edges))) {
+        while (edges == null || (!isConnectedToEnd(edges, traverse))) {
             edges = new ArrayList<>();
             for (char start : traverse.alphabet()) {
                 if (start != traverse.end) {
@@ -109,7 +95,7 @@ public class DinucleotideShuffle {
      * @param edges list of edges to be examined.
      * @return true if connected, false otherwise.
      */
-    private boolean isConnectedToEnd(List<Pair<Character, Character>> edges) {
+    private static boolean isConnectedToEnd(List<Pair<Character, Character>> edges, Traverse traverse) {
         HashMap<Character, Boolean> connected = new HashMap<>();
         Set<Character> alphabet = traverse.alphabet();
 

@@ -27,21 +27,31 @@ public class DinculeotideTest {
     public void testValidSequence() {
         Assertions.assertTrue(DinucleotideShuffle.validSequence("AAAACCCCGGGGTTTT"));
         Assertions.assertFalse(DinucleotideShuffle.validSequence("UAAACCCCGGGGTTTT"));
-        // Empty string is invalid
+        // Empty string or one-character string is invalid
         Assertions.assertFalse(DinucleotideShuffle.validSequence(""));
+        Assertions.assertFalse(DinucleotideShuffle.validSequence("A"));
+        // Two-character strings are valid.
+        Assertions.assertTrue(DinucleotideShuffle.validSequence("AA"));
     }
 
     @Test
     public void testShuffle() throws InvalidInputException {
         String input = "ACAGGATTCAGATTAGCCCGGAAATTTAAC";
-        DinucleotideShuffle shuffle = new DinucleotideShuffle(input);
         for (int i = 0; i < 10; i++) {
-            String output = shuffle.shuffleSequence();
+            String output = DinucleotideShuffle.shuffleSequence(input);
             Assertions.assertEquals(output.charAt(0), 'A');
             Assertions.assertEquals(output.charAt(input.length() - 1), input.charAt(input.length() - 1));
             Assertions.assertEquals(output.length(), input.length());
             Assertions.assertEquals(countDinucleotides(input), countDinucleotides(output));
             Assertions.assertNotEquals(output, input);
         }
+    }
+
+    @Test
+    public void shuffleShortSequence() throws InvalidInputException {
+        String input = "AC";
+        String output = DinucleotideShuffle.shuffleSequence(input);
+        //There's only one way to preserve the dinucleotide frequency, which is to return the same sequence.
+        Assertions.assertEquals(output, input);
     }
 }
