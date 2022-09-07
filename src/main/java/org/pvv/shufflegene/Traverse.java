@@ -99,20 +99,18 @@ public class Traverse {
     }
 
     /**
-     * Convert the traverse to a string.
+     * Convert the traverse to a string. This method is unsafe, since it only works when the traverse
+     * is in a fully connected state.
      *
      * @return string with nucleotide sequence
      */
-    public String toString() {
+    public String unsafeToString() throws IllegalStateException {
         StringBuilder result = new StringBuilder();
         HashMap<Character, ArrayList<Character>> edgeMapCopy = copyEdgeMap();
 
         char current = start;
         result.append(start);
 
-        // Fixme: This only works if the traverse is in a valid ordering.
-        // Otherwise it throws an out of bounds exception. Need to think of a better
-        // way to handle this. Possibly with an unsafeToString and a safe toString with a wrap.
         try {
             for (int i = 1; i < this.length; i++) {
                 char next = edgeMapCopy.get(current).remove(0);
@@ -120,7 +118,7 @@ public class Traverse {
                 current = next;
             }
         } catch (IndexOutOfBoundsException e) {
-            return super.toString();
+            throw new IllegalStateException("Traverse is not fully connected and cannot be converted to a string.");
         }
 
         return result.toString();
