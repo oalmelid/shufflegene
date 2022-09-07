@@ -31,7 +31,7 @@ public class DinucleotideShuffle {
      * @param sequence the sequence to be shuffled.
      * @return a string containing a shuffled sequence with the same dinucleotide frequency as the input.
      */
-    public static String shuffleSequence(String sequence) throws InvalidInputException {
+    public static String shuffleSequence(String sequence) throws InvalidInputException, IllegalStateException {
         sequence = sequence.toUpperCase();
         if (!validSequence(sequence)) {
             throw new InvalidInputException(String.format("Input string %s does not conform with alphabet %s\n", sequence, ALPHABET));
@@ -41,7 +41,9 @@ public class DinucleotideShuffle {
         ArrayList<Pair<Character, Character>> edges = pickEdges(traverse);
 
         for (Pair<Character, Character> edge : edges) {
-            traverse.removeEdge(edge);
+            if (!traverse.removeEdge(edge)) {
+                throw new IllegalStateException("Attempted to remove an edge that does not exist. This should never happen");
+            }
         }
 
         traverse.shuffleEdgeLists();
@@ -50,7 +52,7 @@ public class DinucleotideShuffle {
             traverse.appendEdge(edge);
         }
 
-        return traverse.toString();
+        return traverse.unsafeToString();
     }
 
     /**

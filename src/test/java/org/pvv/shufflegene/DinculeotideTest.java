@@ -35,7 +35,7 @@ public class DinculeotideTest {
     }
 
     @Test
-    public void testShuffle() throws InvalidInputException {
+    public void testShuffle() throws InvalidInputException, IllegalStateException {
         String input = "ACAGGATTCAGATTAGCCCGGAAATTTAAC";
         for (int i = 0; i < 10; i++) {
             String output = DinucleotideShuffle.shuffleSequence(input);
@@ -48,7 +48,7 @@ public class DinculeotideTest {
     }
 
     @Test
-    public void shuffleShortSequence() throws InvalidInputException {
+    public void shuffleShortSequence() throws InvalidInputException, IllegalStateException {
         String input = "AC";
         String output = DinucleotideShuffle.shuffleSequence(input);
         //There's only one way to preserve the dinucleotide frequency, which is to return the same sequence.
