@@ -32,9 +32,11 @@ public class Traverse {
 
     /**
      * Set the edge map and associated variables based on an input string.
-     * The edge map is a graph representation of the input sequence, it's represented
-     * here as a HashMap of graph edges, keyed by the starting point of the edge.
-     * This makes it easier to reconstruct the sequence later by p
+     * The edge map is a graph representation of the input sequence, it's stored
+     * as a HashMap of lists graph edges, keyed by the starting point of the edge.
+     * The sequence can be reconstructed by {@link #unsafeToString()}, which
+     * pops the first edge starting with a given nucleotide sequentially until
+     * there are no more edges left.
      *
      * @param sequence nucleotide sequence.
      */

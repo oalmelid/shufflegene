@@ -1,1 +1,1 @@
-typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"org.pvv.shufflegene","l":"DinculeotideTest"},{"p":"org.pvv.shufflegene","l":"DinucleotideShuffle"},{"p":"org.pvv.shufflegene","l":"InvalidInputException"},{"p":"org.pvv.shufflegene","l":"Traverse"}]
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"org.pvv.shufflegene","l":"DinucleotideShuffle"},{"p":"org.pvv.shufflegene","l":"Edge"},{"p":"org.pvv.shufflegene","l":"InvalidInputException"},{"p":"org.pvv.shufflegene","l":"Traverse"}]
