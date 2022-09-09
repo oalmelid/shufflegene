@@ -1,7 +1,5 @@
 package org.pvv.shufflegene;
 
-import org.javatuples.Pair;
-
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -32,23 +30,21 @@ public class DinucleotideShuffle {
      * @return a string containing a shuffled sequence with the same dinucleotide frequency as the input.
      */
     public static String shuffleSequence(String sequence) throws InvalidInputException, IllegalStateException {
-        sequence = sequence.toUpperCase();
-        if (!validSequence(sequence)) {
-            throw new InvalidInputException(String.format("Input string %s does not conform with alphabet %s\n", sequence, ALPHABET));
+        String upperCaseSequence = sequence.toUpperCase();
+        if (!validSequence(upperCaseSequence)) {
+            throw new InvalidInputException(String.format("Input string %s does not conform with alphabet %s\n", upperCaseSequence, ALPHABET));
         }
 
-        Traverse traverse = new Traverse(sequence);
-        ArrayList<Pair<Character, Character>> edges = pickEdges(traverse);
+        Traverse traverse = new Traverse(upperCaseSequence);
+        ArrayList<Edge> edges = pickEdges(traverse);
 
-        for (Pair<Character, Character> edge : edges) {
-            if (!traverse.removeEdge(edge)) {
-                throw new IllegalStateException("Attempted to remove an edge that does not exist. This should never happen");
-            }
+        if (!edges.stream().allMatch(traverse::removeEdge)) {
+            throw new IllegalStateException("Attempted to remove an edge that does not exist. This should never happen");
         }
 
         traverse.shuffleEdgeLists();
 
-        for (Pair<Character, Character> edge : edges) {
+        for (Edge edge : edges) {
             traverse.appendEdge(edge);
         }
 
@@ -74,17 +70,16 @@ public class DinucleotideShuffle {
      *
      * @return a set of Pairs representing directed edges.
      */
-    private static ArrayList<Pair<Character, Character>> pickEdges(Traverse traverse) {
+    private static ArrayList<Edge> pickEdges(Traverse traverse) {
         Random rand = new Random();
-        ArrayList<Pair<Character, Character>> edges = null;
+        ArrayList<Edge> edges = null;
 
         while (edges == null || (!isConnectedToEnd(edges, traverse))) {
             edges = new ArrayList<>();
             for (char start : traverse.alphabet()) {
                 if (start != traverse.end) {
-                    ArrayList<Character> jumps = traverse.getEdgeList(start);
-                    char end = jumps.get(rand.nextInt(jumps.size()));
-                    edges.add(new Pair<>(start, end));
+                    ArrayList<Edge> jumps = traverse.getEdgeList(start);
+                    edges.add(jumps.get(rand.nextInt(jumps.size())));
                 }
             }
         }
@@ -97,7 +92,7 @@ public class DinucleotideShuffle {
      * @param edges list of edges to be examined.
      * @return true if connected, false otherwise.
      */
-    private static boolean isConnectedToEnd(List<Pair<Character, Character>> edges, Traverse traverse) {
+    private static boolean isConnectedToEnd(List<Edge> edges, Traverse traverse) {
         HashMap<Character, Boolean> connected = new HashMap<>();
         Set<Character> alphabet = traverse.alphabet();
 
@@ -107,10 +102,11 @@ public class DinucleotideShuffle {
         // The end element is connected to itself.
         connected.put(traverse.end, true);
 
+        // Loop through the edges, and set the start to true if end is true.
         for (int i = 0; i < edges.size(); i++) {
-            for (Pair<Character, Character> vertex : edges) {
-                if (connected.get(vertex.getValue1())) {
-                    connected.put(vertex.getValue0(), true);
+            for (Edge vertex : edges) {
+                if (connected.get(vertex.end)) {
+                    connected.put(vertex.start, true);
                 }
             }
             if (!connected.containsValue(false)) {
