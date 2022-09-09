@@ -1,7 +1,5 @@
 package org.pvv.shufflegene;
 
-import java.util.Objects;
-
 public class Edge {
     public char start;
     public char end;
@@ -17,10 +15,5 @@ public class Edge {
         if (o == null || getClass() != o.getClass()) return false;
         Edge edge = (Edge) o;
         return start == edge.start && end == edge.end;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(start, end);
     }
 }

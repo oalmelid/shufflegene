@@ -53,6 +53,15 @@ public class DinculeotideTest {
         }
     }
 
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"UAAACCCCGGGGTTTT", "A"})
+    public void testThrowsInvalidInputException(String input) {
+        Assertions.assertThrows(InvalidInputException.class, () -> {
+            DinucleotideShuffle.shuffleSequence(input);
+        });
+    }
+
     @Test
     public void shuffleShortSequence() throws InvalidInputException, IllegalStateException {
         String input = "AC";

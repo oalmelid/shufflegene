@@ -23,13 +23,6 @@ public class Traverse {
         setEdgeMap(sequence);
     }
 
-    public Traverse(char start, char end, int length, HashMap<Character, ArrayList<Edge>> edgeMap) {
-        this.start = start;
-        this.end = end;
-        this.length = length;
-        this.edgeMap = edgeMap;
-    }
-
     // Helper function to copy a list.
     private static <T> ArrayList<T> copyList(List<T> input) {
         ArrayList<T> result = new ArrayList<>(input);
@@ -81,7 +74,7 @@ public class Traverse {
     }
 
     /**
-     * Perform a deep copy of edgeMap, used by {@link #deepCopy()}
+     * Perform a deep copy of edgeMap.
      *
      * @return a copy of edgeMap
      */
@@ -132,15 +125,6 @@ public class Traverse {
      */
     public Set<Character> alphabet() {
         return this.edgeMap.keySet();
-    }
-
-    /**
-     * Perform a deep copy of the traverse.
-     *
-     * @return a copy of this instance which can be mutated without modifying the original.
-     */
-    public Traverse deepCopy() {
-        return new Traverse(this.start, this.end, this.length, copyEdgeMap());
     }
 
     /**
