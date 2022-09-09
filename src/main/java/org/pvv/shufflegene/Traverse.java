@@ -1,7 +1,5 @@
 package org.pvv.shufflegene;
 
-import org.javatuples.Pair;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,7 +11,7 @@ public class Traverse {
     public char end;
     // start, end and path of original sequence
     public int length;
-    private HashMap<Character, ArrayList<Character>> edgeMap;
+    private HashMap<Character, ArrayList<Edge>> edgeMap;
 
     /**
      * Construct a traverse from a sequence of nucleotides
@@ -25,7 +23,7 @@ public class Traverse {
         setEdgeMap(sequence);
     }
 
-    public Traverse(char start, char end, int length, HashMap<Character, ArrayList<Character>> edgeMap) {
+    public Traverse(char start, char end, int length, HashMap<Character, ArrayList<Edge>> edgeMap) {
         this.start = start;
         this.end = end;
         this.length = length;
@@ -41,6 +39,9 @@ public class Traverse {
 
     /**
      * Set the edge map and associated variables based on an input string.
+     * The edge map is a graph representation of the input sequence, it's represented
+     * here as a HashMap of graph edges, keyed by the starting point of the edge.
+     * This makes it easier to reconstruct the sequence later by p
      *
      * @param sequence nucleotide sequence.
      */
@@ -53,8 +54,8 @@ public class Traverse {
         this.edgeMap = new HashMap<>();
 
         for (int i = 0; i < nucleotides.length - 1; i++) {
-            ArrayList<Character> edges = this.edgeMap.getOrDefault(nucleotides[i], new ArrayList<>());
-            edges.add(nucleotides[i + 1]);
+            ArrayList<Edge> edges = this.edgeMap.getOrDefault(nucleotides[i], new ArrayList<>());
+            edges.add(new Edge(nucleotides[i], nucleotides[i + 1]));
             this.edgeMap.put(nucleotides[i], edges);
         }
 
@@ -66,8 +67,8 @@ public class Traverse {
      * @param edge Pair of characters giving the start and end of the vertex.
      * @return whether the removal was successful or not.
      */
-    public boolean removeEdge(Pair<Character, Character> edge) {
-        return edgeMap.get(edge.getValue0()).remove(edge.getValue1());
+    public boolean removeEdge(Edge edge) {
+        return edgeMap.get(edge.start).remove(edge);
     }
 
     /**
@@ -75,8 +76,8 @@ public class Traverse {
      *
      * @param edge Pair of characters giving the start and end of the vertex.
      */
-    public void appendEdge(Pair<Character, Character> edge) {
-        edgeMap.get(edge.getValue0()).add(edge.getValue1());
+    public void appendEdge(Edge edge) {
+        edgeMap.get(edge.start).add(edge);
     }
 
     /**
@@ -84,7 +85,7 @@ public class Traverse {
      *
      * @return a copy of edgeMap
      */
-    private HashMap<Character, ArrayList<Character>> copyEdgeMap() {
+    private HashMap<Character, ArrayList<Edge>> copyEdgeMap() {
         return this.edgeMap
                 .entrySet()
                 .stream()
@@ -106,14 +107,14 @@ public class Traverse {
      */
     public String unsafeToString() throws IllegalStateException {
         StringBuilder result = new StringBuilder();
-        HashMap<Character, ArrayList<Character>> edgeMapCopy = copyEdgeMap();
+        HashMap<Character, ArrayList<Edge>> edgeMapCopy = copyEdgeMap();
 
         char current = start;
         result.append(start);
 
         try {
             for (int i = 1; i < this.length; i++) {
-                char next = edgeMapCopy.get(current).remove(0);
+                char next = edgeMapCopy.get(current).remove(0).end;
                 result.append(next);
                 current = next;
             }
@@ -148,7 +149,7 @@ public class Traverse {
      * @param startEdge which vertex to retrieve
      * @return List of all endpoints for vertices that started at startEdge
      */
-    public ArrayList<Character> getEdgeList(char startEdge) {
+    public ArrayList<Edge> getEdgeList(char startEdge) {
         return this.edgeMap.get(startEdge);
     }
 
@@ -156,7 +157,7 @@ public class Traverse {
      * Shuffle all vertices in edgeMap
      */
     void shuffleEdgeLists() {
-        for (ArrayList<Character> connections : edgeMap.values()) {
+        for (ArrayList<Edge> connections : edgeMap.values()) {
             Collections.shuffle(connections);
         }
     }
