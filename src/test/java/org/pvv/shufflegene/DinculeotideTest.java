@@ -2,6 +2,9 @@ package org.pvv.shufflegene;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.HashMap;
 
@@ -23,16 +26,19 @@ public class DinculeotideTest {
         return counter;
     }
 
-    @Test
-    public void testValidSequence() {
-        Assertions.assertTrue(DinucleotideShuffle.validSequence("AAAACCCCGGGGTTTT"));
-        Assertions.assertFalse(DinucleotideShuffle.validSequence("UAAACCCCGGGGTTTT"));
-        // Empty string or one-character string is invalid
-        Assertions.assertFalse(DinucleotideShuffle.validSequence(""));
-        Assertions.assertFalse(DinucleotideShuffle.validSequence("A"));
-        // Two-character strings are valid.
-        Assertions.assertTrue(DinucleotideShuffle.validSequence("AA"));
+    @ParameterizedTest
+    @ValueSource(strings = {"AAAACCCCGGGGTTTT", "AA", "GACT", "GAGCGGTT"})
+    public void testValidSequence(String sequence) {
+        Assertions.assertTrue(DinucleotideShuffle.validSequence(sequence));
     }
+
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"UAAACCCCGGGGTTTT", "A"})
+    public void testInvalidSequence(String sequence) {
+        Assertions.assertFalse(DinucleotideShuffle.validSequence(sequence));
+    }
+
 
     @Test
     public void testShuffle() throws InvalidInputException, IllegalStateException {
